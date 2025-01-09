@@ -1,0 +1,41 @@
+﻿@model IEnumerable<ShopITCourses.Models.Category>
+
+@{
+    ViewData["Title"] = "Категорії";
+}
+
+<h1 align="center">Категорії</h1>
+
+<p>
+    <a class="btn btn-primary" asp-action="Create">Додати категорію</a>
+</p>
+<table class="table table-hover table-bordered">
+    <thead>
+        <tr align="center">
+            <th>
+                @Html.DisplayNameFor(model => model.CategoryName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DisplayOrder)
+            </th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CategoryName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DisplayOrder)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Редагування</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Деталі</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Видалення</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
