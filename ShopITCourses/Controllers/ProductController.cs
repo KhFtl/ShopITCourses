@@ -13,10 +13,12 @@ namespace ShopITCourses.Controllers
     public class ProductController : Controller
     {
         private readonly ApplicationDbContext _db;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductController(ApplicationDbContext context)
+        public ProductController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _db = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Product
@@ -61,6 +63,15 @@ namespace ShopITCourses.Controllers
         {
             if (ModelState.IsValid)
             {
+                var files = HttpContext.Request.Form.Files;
+                string upload = _webHostEnvironment.WebRootPath + WC.ImagePath;
+                string fileName = Guid.NewGuid().ToString();
+                string extension = Path.GetExtension(files[0].FileName);
+                using (var fileStream = new FileStream(Path.Combine(upload, fileName + extension), FileMode.Create))
+                {
+                    await files[0].CopyToAsync(fileStream);
+                }
+                product.Image = fileName + extension;
                 _db.Add(product);
                 await _db.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -149,6 +160,12 @@ namespace ShopITCourses.Controllers
             var product = await _db.Product.FindAsync(id);
             if (product != null)
             {
+                var file = Path.Combine(_webHostEnvironment.WebRootPath + WC.ImagePath , product.Image);
+                try
+                {
+                    System.IO.File.Delete(file);
+                }
+                catch { }
                 _db.Product.Remove(product);
             }
 
