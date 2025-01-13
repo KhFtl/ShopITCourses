@@ -1,0 +1,55 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.IO
+@{
+    Layout = null;
+}
+
+@functions {
+    public class ImageValidator
+    { 
+        public static bool isImageByExtension(string file)
+        {
+            string? extension = System.IO.Path.GetExtension(file)?.ToLowerInvariant();
+            if (extension == null) return false;
+            string[] supportEx = { ".jpg",".jpeg",".png",".gif",".bmp",".svg" };
+            return Array.Exists(supportEx, ext => ext == extension);
+        }
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Файли на сервері</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/vendor/ckeditor/ckeditor.js"></script>
+</head>
+<body>
+    <div id="fileExplorer">
+        <div class="img-thumbnail">
+            @foreach (System.IO.FileInfo item in ViewBag.FilesUploads)
+            {
+                if (ImageValidator.isImageByExtension(item.Name))
+                { 
+                    <figure class="figure text-center">
+                        <img src="@Url.Content("~/files/" + item.Name)" title="@item.Name" alt="No image" width="100" class="figure-img img-fluid rounded"/>
+                        <figcaption class="figure-caption text-center"><b>@item.Name</b></figcaption>
+                    </figure>
+                }
+                else
+                {
+                    <figure class="figure text-center">
+                        <img src="@Url.Content("~/images/fileImage.jpg")" alt="No image" width="100" class="figure-img img-fluid rounded" />
+                        <figcaption class="figure-caption text-center"><b>@item.Name</b></figcaption>
+                    </figure>
+                }
+            }
+            
+        </div>
+    </div>
+</body>
+</html>
