@@ -61,6 +61,10 @@ namespace ShopITCourses.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,Price,Image,CategoryId")] Product product)
         {
+            if (HttpContext.Request.Form.Files.Count == 0)
+            {
+                ModelState.AddModelError("Image", "Оберіть файл з картинкою");
+            }
             if (ModelState.IsValid)
             {
                 var files = HttpContext.Request.Form.Files;
@@ -113,6 +117,28 @@ namespace ShopITCourses.Controllers
             {
                 try
                 {
+                    Product oldProduct = await _db.Product.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+                    var files = HttpContext.Request.Form.Files;
+                    product.Image = oldProduct.Image;
+                    if (files.Count > 0)
+                    { 
+                        string upload = _webHostEnvironment.WebRootPath + WC.ImagePath;
+                        if (oldProduct != null && oldProduct.Image != null)
+                        { 
+                            var oldFile = Path.Combine(upload, oldProduct.Image);
+                            if(System.IO.File.Exists(oldFile))
+                            {
+                                System.IO.File.Delete(oldFile);
+                            }
+                        }
+                        string fileName = Guid.NewGuid().ToString();
+                        string extension = Path.GetExtension(files[0].FileName);
+                        using (var fileStream = new FileStream(Path.Combine(upload, fileName + extension), FileMode.Create))
+                        {
+                            await files[0].CopyToAsync(fileStream);
+                        }
+                        product.Image = fileName + extension;
+                    }
                     _db.Update(product);
                     await _db.SaveChangesAsync();
                 }

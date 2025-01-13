@@ -29,7 +29,6 @@ namespace ShopITCourses.Models
         public int CategoryId { get; set; }
 
         [DisplayName("Категорія товару")]
-        //[Required(ErrorMessage = "Оберіть категорію")]
         [ForeignKey("CategoryId")]
         public virtual Category? Category { get; set; }
     }
