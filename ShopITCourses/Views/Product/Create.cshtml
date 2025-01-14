@@ -9,7 +9,20 @@
 
 <hr />
 
-<partial name="_Product" model="@Model"/>
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Create" enctype="multipart/form-data">
+            
+            <partial name="_Product" model=@Model />
+
+            <div class="form-group">
+                <input type="submit" value="Зберегти" class="btn btn-success" />
+                <a asp-action="Index" class="btn btn-primary">Назад</a>
+            </div>
+        </form>
+    </div>
+</div>
+
 
 @section Scripts {
     @{

@@ -38,5 +38,19 @@ namespace ShopITCourses.Controllers
             ViewBag.FilesUploads = path.GetFiles();
             return View("FileBrowser");
         }
+
+        [HttpGet]
+        public void Delete(string name)
+        {
+            var path = new DirectoryInfo(Path.Combine(_webHostEnvironment.WebRootPath, "files"));
+            var file = path +"\\"+ name;
+            try
+            {
+               if (System.IO.File.Exists(file))
+                  System.IO.File.Delete(file);
+            }
+            catch (Exception)
+            {}
+        }
     }
 }

@@ -23,32 +23,72 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Файли на сервері</title>
+    <style>
+        .custom-figure {
+            flex: 0 0 auto;
+            border: 1px solid black;
+            padding-right: 20px;
+            margin: 0px; 
+            height: 100px; 
+            display: flex; 
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        .d-flex {
+            display: flex;
+            flex-wrap: wrap; 
+            gap: 10px; 
+        }
+        .custom-figure img {
+            margin-bottom: auto;
+        }
+    </style>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/assets/vendor/ckeditor/ckeditor.js"></script>
+    <script>
+        $(document).ready(function() {
+            var urlParams = new URLSearchParams(window.location.search);
+            var ckEditorFuncNum = urlParams.get('CKEditorFuncNum');
+            $(function () {
+                $('img').dblclick(function () {
+                    var fileUrl = '/files/'+$(this).attr('title');
+                    window.opener.CKEDITOR.tools.callFunction(ckEditorFuncNum, fileUrl);
+                    window.close();
+                }).hover(function () {
+                    $(this).css('cursor', 'pointer');
+            })
+         })
+        })
+    </script>
 </head>
 <body>
     <div id="fileExplorer">
-        <div class="img-thumbnail">
+        <h3 align="center">Доступні файли на сервері</h3>
+        <h4 align="center">Double click - вставити файл</h4>
+        <div class="d-flex justify-content-center">
             @foreach (System.IO.FileInfo item in ViewBag.FilesUploads)
             {
                 if (ImageValidator.isImageByExtension(item.Name))
-                { 
-                    <figure class="figure text-center">
-                        <img src="@Url.Content("~/files/" + item.Name)" title="@item.Name" alt="No image" width="100" class="figure-img img-fluid rounded"/>
-                        <figcaption class="figure-caption text-center"><b>@item.Name</b></figcaption>
+                {
+                    <figure class="figure text-center custom-figure">
+                       <img src="@Url.Content("~/files/" + item.Name)" title="@item.Name" alt="No image" width="100" class="rounded" />
+                       <figcaption class="figure-caption text-center"><b>@item.Name</b></figcaption>
+                        <a asp-controller="Ckeditor" asp-action="Delete" class="btn btn-sm btn-danger" asp-route-name=@item.Name>Видалити</a>
                     </figure>
+                    
                 }
                 else
                 {
-                    <figure class="figure text-center">
-                        <img src="@Url.Content("~/images/fileImage.jpg")" alt="No image" width="100" class="figure-img img-fluid rounded" />
+                    <figure class="figure text-center custom-figure">
+                        <img src="@Url.Content("~/images/fileImage.jpg")" title="@item.Name" alt="No image" width="60" class="rounded" />
                         <figcaption class="figure-caption text-center"><b>@item.Name</b></figcaption>
+                        <a asp-controller="Ckeditor" asp-action="Delete" class="btn btn-sm btn-danger" asp-route-name=@item.Name>Видалити</a>
                     </figure>
                 }
             }
-            
         </div>
     </div>
 </body>
