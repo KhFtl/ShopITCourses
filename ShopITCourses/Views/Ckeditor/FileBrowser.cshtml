@@ -63,6 +63,24 @@
          })
         })
     </script>
+    <script>
+          $(document).ready(function () {
+            $(document).on("click", "#delete", function (e) {
+                e.preventDefault(); 
+                const url = $(this).attr("href"); 
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    success: function () {
+                        location.reload(); 
+                    },
+                    error: function () {
+                        alert("Не вдалося видалити файл. Спробуйте ще раз.");
+                    }
+                });
+            });
+        });
+    </script>
 </head>
 <body>
     <div id="fileExplorer">
@@ -76,7 +94,7 @@
                     <figure class="figure text-center custom-figure">
                        <img src="@Url.Content("~/files/" + item.Name)" title="@item.Name" alt="No image" width="100" class="rounded" />
                        <figcaption class="figure-caption text-center"><b>@item.Name</b></figcaption>
-                        <a asp-controller="Ckeditor" asp-action="Delete" class="btn btn-sm btn-danger" asp-route-name=@item.Name>Видалити</a>
+                        <a id="delete" asp-controller="Ckeditor" asp-action="Delete" class="btn btn-sm btn-danger" asp-route-name=@item.Name>Видалити</a>
                     </figure>
                     
                 }
@@ -85,7 +103,7 @@
                     <figure class="figure text-center custom-figure">
                         <img src="@Url.Content("~/images/fileImage.jpg")" title="@item.Name" alt="No image" width="60" class="rounded" />
                         <figcaption class="figure-caption text-center"><b>@item.Name</b></figcaption>
-                        <a asp-controller="Ckeditor" asp-action="Delete" class="btn btn-sm btn-danger" asp-route-name=@item.Name>Видалити</a>
+                        <a id="delete" asp-controller="Ckeditor" asp-action="Delete" class="btn btn-sm btn-danger" asp-route-name=@item.Name>Видалити</a>
                     </figure>
                 }
             }

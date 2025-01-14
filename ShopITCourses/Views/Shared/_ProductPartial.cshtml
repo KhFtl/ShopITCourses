@@ -1,0 +1,25 @@
+﻿@model Product
+
+<div class="col-lg-4 col-md-6 pb-4 filter @Model.Category.CategoryName.Replace(' ','_')">
+    <div class="card bg-white rounded shadow-sm" style="border:1px solid #222">
+        <div class="card-body px-3 pt-3 pb-1 row">
+            <div class="col-7"><label class="float-left">@Model.Name</label></div>
+            <div class="col-5"><label class="float-right"><span class="text-info h5">@Model.Price</span> / UAH</label> </div>
+        </div>
+        <div class="justify-content-center">
+            <span class="badge p-2 border w-100" style="color:black; background-color:lavenderblush">@Model.Category.CategoryName</span>
+        </div>
+        <br/>
+        <img class="img-fluid d-block mx-auto" width="150" src="@WC.ImagePath@Model.Image" alt="Card image cap">
+        <div class="card-body p-1 px-3 row">
+
+            <div class="col-12 pt-2" style="font-size:13px; text-align:justify">
+                <p>@Html.Raw(Model.Description)</p>
+            </div> 
+            <div class="col-12 p-1">
+                <a class="btn btn-dark form-control btn-sm p-2" style="height:40px">Детально</a>
+            </div>
+        </div>
+    </div>
+
+</div>
