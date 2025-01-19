@@ -40,17 +40,23 @@ namespace ShopITCourses.Controllers
         }
 
         [HttpGet]
-        public void Delete(string name)
+        public JsonResult Delete(string name)
         {
             var path = new DirectoryInfo(Path.Combine(_webHostEnvironment.WebRootPath, "files"));
-            var file = path +"\\"+ name;
+            var file = Path.Combine(path.ToString(), name);
             try
             {
-               if (System.IO.File.Exists(file))
-                  System.IO.File.Delete(file);
+                if (System.IO.File.Exists(file))
+                {
+                    System.IO.File.Delete(file);
+                    return Json(new { success = true, message = "Файл успішно видалено." });
+                }
+                return Json(new { success = false, message = "Файл не знайдено." });
             }
-            catch (Exception)
-            {}
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Сталася помилка: {ex.Message}" });
+            }
         }
     }
 }

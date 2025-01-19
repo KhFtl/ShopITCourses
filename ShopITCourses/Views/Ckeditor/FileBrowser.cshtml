@@ -64,20 +64,28 @@
         })
     </script>
     <script>
-          $(document).ready(function () {
+            $(document).ready(function () {
             $(document).on("click", "#delete", function (e) {
                 e.preventDefault(); 
-                const url = $(this).attr("href"); 
-                $.ajax({
-                    type: "GET",
-                    url: url,
-                    success: function () {
-                        location.reload(); 
-                    },
-                    error: function () {
-                        alert("Не вдалося видалити файл. Спробуйте ще раз.");
-                    }
-                });
+                const url = $(this).attr("href");
+                const fileName = $(this).closest("figure").find("figcaption").text().trim();
+                if (confirm('Ви впевнені, що хочете видалити цей файл?\n'+fileName)) {
+                    $.ajax({
+                        type: "GET",
+                        url: url,
+                        success: function (response) {
+                            if (response.success) {
+                                //alert(response.message); 
+                                location.reload(); 
+                            } else {
+                                alert(response.message); 
+                            }
+                        },
+                        error: function () {
+                            alert("Сталася помилка при спробі видалити файл. Спробуйте ще раз.");
+                        }
+                    });
+                }
             });
         });
     </script>

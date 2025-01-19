@@ -1,25 +1,50 @@
-﻿@model Product
+﻿@using ShopITCourses.Models.ViewModel
+@model Product
+
+@{
+    List<DetailsVM> detailsVM = new List<DetailsVM>();
+    detailsVM = ViewData["DetailsVM"] as List<DetailsVM>;
+}
 
 <div class="col-lg-4 col-md-6 pb-4 filter @Model.Category.CategoryName.Replace(' ','_')">
-    <div class="card bg-white rounded shadow-sm" style="border:1px solid #222">
-        <div class="card-body px-3 pt-3 pb-1 row">
-            <div class="col-7"><label class="float-left">@Model.Name</label></div>
-            <div class="col-5"><label class="float-right"><span class="text-info h5">@Model.Price</span> / UAH</label> </div>
-        </div>
-        <div class="justify-content-center">
-            <span class="badge p-2 border w-100" style="color:black; background-color:lavenderblush">@Model.Category.CategoryName</span>
-        </div>
-        <br/>
-        <img class="img-fluid d-block mx-auto" width="150" src="@WC.ImagePath@Model.Image" alt="Card image cap">
-        <div class="card-body p-1 px-3 row">
-
-            <div class="col-12 pt-2" style="font-size:13px; text-align:justify">
-                <p>@Html.Raw(Model.Description)</p>
-            </div> 
-            <div class="col-12 p-1">
-                <a class="btn btn-dark form-control btn-sm p-2" style="height:40px">Детально</a>
+    <div class="card bg-white rounded shadow-sm h-100 d-flex flex-column" style="border:1px solid #222">
+        <div class="card-body px-3 pt-3 pb-1">
+            <!-- Назва товару -->
+            <div class="text-center">
+                <label class="font-weight-bold">@Model.Name</label>
+            </div>
+            <!-- Категорія товару -->
+            <div class="text-center my-2">
+                <span class="badge p-2 border" style="color:black; background-color:lavenderblush">@Model.Category.CategoryName</span>
+            </div>
+            <!-- Ціна -->
+            <div class="text-center">
+                <label><span class="text-info h5">@Model.Price</span> / UAH</label>
             </div>
         </div>
+        <!-- Зображення товару -->
+        <div class="text-center">
+            <img class="img-fluid d-block mx-auto product-image" width="150" src="@WC.ImagePath@Model.Image" alt="Card image cap">
+        </div>
+        <!-- Опис товару -->
+        <div class="card-body p-1 px-3 row flex-grow-1">
+            <div class="col-12 pt-2" style="font-size:13px; text-align:justify">
+                <p>@Html.Raw(Model.Description)</p>
+            </div>
+        </div>
+        <!-- Кнопка -->
+        <div class="card-footer mt-auto">
+            @foreach (var detailVM in detailsVM)
+            {
+                if (detailVM.ExistsInCart && detailVM.Product.Name == @Model.Name)
+                {
+                    <a class="btn btn-warning form-control btn-sm p-2" style="height:40px" asp-area="Home" asp-action="Details" asp-route-id="@Model.Id">Товар в кошику</a>
+                }
+                if (!detailVM.ExistsInCart && detailVM.Product.Name == @Model.Name)
+                {
+                    <a class="btn btn-success form-control btn-sm p-2" style="height:40px" asp-area="Home" asp-action="Details" asp-route-id="@Model.Id">Детально</a>
+                }
+            }
+        </div>
     </div>
-
 </div>
