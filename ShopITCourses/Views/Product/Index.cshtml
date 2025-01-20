@@ -40,7 +40,7 @@
                 @Html.Raw(item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Price)
+                @Html.DisplayFor(modelItem => item.Price) @WC.Currency
             </td>
             <td>
                     <img src="@WC.ImagePath@item.Image" width="30%" height="30%" />

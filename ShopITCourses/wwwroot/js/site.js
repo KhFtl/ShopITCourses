@@ -2,3 +2,10 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+
+$(document).ready(function () {
+    $('.preloader').show()
+    $(window).on('load', function () {
+        $('.preloader').hide()
+    });
+});

@@ -2,7 +2,6 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using ShopITCourses.Data;
 using ShopITCourses.Models;
 using ShopITCourses.Models.ViewModel;
@@ -27,7 +26,7 @@ namespace ShopITCourses.Controllers
             homeVM.Products = _db.Product;
             homeVM.Categorys = _db.Category;
 
-            List<ShopingCart> shopingCartList = GetShopingCartSession();
+            List<ShopingCart> shopingCartList = ShopingCartSession.GetShopingCartSession(HttpContext);
             List<DetailsVM> detailsVMs = new List<DetailsVM>();
             foreach (var product in homeVM.Products)
             { 
@@ -47,7 +46,7 @@ namespace ShopITCourses.Controllers
 
         public IActionResult Details(int id)
         {
-            List<ShopingCart> shopingCartList = GetShopingCartSession();
+            List<ShopingCart> shopingCartList = ShopingCartSession.GetShopingCartSession(HttpContext);
             DetailsVM detailsVM = new DetailsVM()
             {
                 Product = _db.Product.Include(x => x.Category).Where(u => u.Id == id).FirstOrDefault(),
@@ -66,14 +65,14 @@ namespace ShopITCourses.Controllers
         [HttpPost, ActionName("Details")]
         public IActionResult DetailsPost(int id)
         {
-            List<ShopingCart> shopingCartList = GetShopingCartSession();
+            List<ShopingCart> shopingCartList = ShopingCartSession.GetShopingCartSession(HttpContext);
             shopingCartList.Add(new ShopingCart { ProductId = id });
             HttpContext.Session.Set(WC.SessionCart, shopingCartList);
             return RedirectToAction(nameof(Index));
         }
         public IActionResult RemoveFromCart(int id)
         { 
-            List<ShopingCart> shopingCartList = GetShopingCartSession();
+            List<ShopingCart> shopingCartList = ShopingCartSession.GetShopingCartSession(HttpContext);
             var itemRemove = shopingCartList.SingleOrDefault(x => x.ProductId == id);
             if (itemRemove != null)
             { 
@@ -81,17 +80,6 @@ namespace ShopITCourses.Controllers
             }
             HttpContext.Session.Set(WC.SessionCart, shopingCartList);
             return RedirectToAction(nameof(Index));
-        }
-        //Метод для отримання товарів з сесії
-        private List<ShopingCart> GetShopingCartSession()
-        {
-            List<ShopingCart> shopingCartList = new List<ShopingCart>();
-            //Якщо сессія не пуста, тобто там були товари
-            if (HttpContext.Session.Get<List<ShopingCart>>(WC.SessionCart) != null && HttpContext.Session.Get<List<ShopingCart>>(WC.SessionCart).Count() > 0)
-            {
-                shopingCartList = HttpContext.Session.Get<List<ShopingCart>>(WC.SessionCart);
-            }
-            return shopingCartList;
         }
 
         public IActionResult Privacy()

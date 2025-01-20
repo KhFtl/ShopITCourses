@@ -44,7 +44,7 @@
                         }
                         else
                         {
-                            <a href="#" class="nav-link"><i class="fas fa-cart-shopping"></i> &nbsp; (0)</a>
+                            <a asp-controller="Cart" asp-action="Index" class="nav-link"><i class="fas fa-cart-shopping"></i> &nbsp; (0)</a>
                         }
                     </ul>
                 </div>
@@ -53,6 +53,7 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            <partial name="_Preloader" />
             @RenderBody()
         </main>
     </div>

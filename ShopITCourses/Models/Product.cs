@@ -18,7 +18,7 @@ namespace ShopITCourses.Models
 
         [Required(ErrorMessage ="Вкажіть ціну товару")]
         [Range(1, double.MaxValue)]
-        [DisplayName("Ціна товару")]
+        [DisplayName("Ціна товару "+WC.Currency)]
         public double Price { get; set; }
 
         [DisplayName("Зображення товару")]

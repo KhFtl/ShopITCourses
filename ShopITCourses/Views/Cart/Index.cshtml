@@ -1,0 +1,79 @@
+﻿@model List<Product>
+@{
+    ViewData["Title"] = "Мій кошик";
+}
+
+@if (Model.Count() > 0)
+{
+    <form class="form-control">
+        <br />
+        <div class="container row">
+            <div class="col-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-primary text-light  ">
+                        <div class="col-12">
+                            <i class="fa fa-shopping-cart">Мій кошик</i> &nbsp;
+
+                        </div>
+                        <div class="col-12 text-center">
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-info btn-sm">Продовжити покупки</a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class=" d-none d-lg-block">
+                            <div class="row" style="color:#821f3d">
+                                <div class="col-lg-2">
+                                </div>
+                                <div class="col-12 col-lg-7">
+                                    Назва товару
+                                </div>
+                                <div class="col-12 col-lg-2">
+                                    Ціна товару грн.
+                                </div>
+                                <div class="col-6 col-sm-4 col-lg-1">
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr />
+                        @foreach (var prod in Model)
+                        {
+                            <div class="row h-100">
+                                <div class="col-4 col-md-2 text-center py-2">
+                                    <img src="@WC.ImagePath@prod.Image" class="rounded" width="100%" />
+                                </div>
+                                <div class="col-8 col-lg-7">
+                                    <h5>@prod.Name</h5>
+                                    <div style="font-size:11px;">@Html.Raw(prod.Description)</div>
+                                </div>
+                                <div class="col-3 col-lg-2 pt-lg-4" style="font-size:11px;">
+                                    <span style="font-size:17px;">@prod.Price</span>/ @WC.Currency
+
+                                </div>
+                                <div class="col-2 col-lg-1 p-0 pt-lg-4 text-center">
+                                    <a asp-action="Remove" asp-controller="Cart" asp-route-id="@prod.Id" class="btn btn-outline-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <hr />
+                        }
+                    </div>
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="col-6 col-md-3 offset-md-9">
+                                <a asp-controller="Order" asp-action="Index" class="btn btn-success form-control ">
+                                    <span>Оформлення замовлення</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+}
+else
+{
+    <h1 class="text-center">Ваш кошик порожній</h1>
+}
