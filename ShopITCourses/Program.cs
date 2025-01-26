@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ShopITCourses;
 using ShopITCourses.Data;
+using ShopITCourses.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +12,13 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options=>options.UseSqlServer(connectionString));
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ApplicationDbContext>();
+//builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+                options.SignIn.RequireConfirmedAccount = false
+                ).AddDefaultTokenProviders()
+                 .AddDefaultUI()
+                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddHttpContextAccessor();
@@ -37,6 +45,23 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredUniqueChars = 0;
 });
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    // Cookie settings
+    options.Cookie.HttpOnly = true;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    options.LoginPath = "/Identity/Account/Login";
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    options.SlidingExpiration = true;
+    options.Cookie.Name = "ShopIT_Identity";
+});
+
+builder.Services.AddAuthorization(options =>
+         {
+             options.AddPolicy("AdminManager", policy => policy.RequireRole(WC.AdminRole, WC.ManagerRole));
+             options.AddPolicy("Customer", policy => policy.RequireRole(WC.CustomerRole));
+             options.AddPolicy("Admin", policy => policy.RequireRole(WC.AdminRole));
+         });
 
 var app = builder.Build();
 
@@ -48,7 +73,22 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+#region Set Roles in DataBase
+using (var scope = app.Services.CreateScope())
+{ 
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var roles = new[] { WC.AdminRole, WC.CustomerRole, WC.ManagerRole };
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+}
+#endregion
+
+    app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();

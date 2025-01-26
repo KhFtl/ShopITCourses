@@ -1,10 +1,33 @@
 ﻿@page
+@using Microsoft.EntityFrameworkCore
+@using ShopITCourses.Data
+@using ShopITCourses.Models
 @model AccessDeniedModel
+@inject Microsoft.AspNetCore.Identity.UserManager<IdentityUser> UserManager
+@inject ApplicationDbContext _db;
 @{
     ViewData["Title"] = "Access denied";
 }
 
+@{
+    var userIdentity = await UserManager.GetUserAsync(User);
+    var roles = userIdentity != null ? await UserManager.GetRolesAsync(userIdentity) : new List<string>();
+}
+@{
+    ShopUser shopUser = null;
+    if (userIdentity != null)
+    {
+        shopUser = await _db.ShopUsers.FirstOrDefaultAsync(x => x.Id == userIdentity.Id);
+    }
+}
+
 <header>
     <h1 class="text-danger">@ViewData["Title"]</h1>
-    <p class="text-danger">You do not have access to this resource.</p>
+    <p class="text-danger">Шановний @userIdentity.UserName @shopUser.FullName ви нажаль не маєте доступу з такими правами:</p>
+    <ol>
+    @foreach (var item in roles)
+    {
+        <li class="text-black">@item</li>
+    }
+    </ol>
 </header>

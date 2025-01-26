@@ -15,6 +15,5 @@ namespace ShopITCourses.Models
         [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Вкажіть адресу доставки")]
         [DisplayName("Адреса доставки")]
         public string AdressDevivery { get; set; }
-
     }
 }
