@@ -11,7 +11,7 @@ using ShopITCourses.Models;
 
 namespace ShopITCourses.Controllers
 {
-    [Authorize(Roles = $"{WC.ManagerRole}, {WC.AdminRole}")]//Доступ нга основі ролів
+    [Authorize(Roles = $"{WC.ManagerRole}, {WC.AdminRole}")]//Доступ на основі ролів
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext _context;

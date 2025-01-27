@@ -20,6 +20,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
                  .AddDefaultUI()
                  .AddEntityFrameworkStores<ApplicationDbContext>();
 
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(options =>
@@ -88,7 +89,7 @@ using (var scope = app.Services.CreateScope())
 }
 #endregion
 
-    app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();

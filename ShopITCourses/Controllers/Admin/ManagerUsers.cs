@@ -1,28 +1,33 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using ShopITCourses.Data;
+using ShopITCourses.Models;
 
 namespace ShopITCourses.Controllers.Admin
 {
+    [Authorize(Policy = "Admin")]
     public class ManagerUsers : Controller
     {
         private readonly UserManager<IdentityUser> _usersManager;
-        private readonly RoleManager<IdentityRole> _roleManager; 
-        
-        public ManagerUsers(UserManager<IdentityUser> usersManager, RoleManager<IdentityRole> roleManager)
+        private readonly ApplicationDbContext _db;
+
+        public ManagerUsers(UserManager<IdentityUser> usersManager, ApplicationDbContext context)
         {
             _usersManager = usersManager;
-            _roleManager = roleManager;
+            _db = context;
         }
 
-       //GET: Users
-       public async Task<IActionResult> Index(string searchBy=null, string searchValue=null)
+        //GET: Users
+        [HttpGet]
+        public async Task<IActionResult> Index(string searchBy, string searchValue)
        {
            var users = _usersManager.Users.ToList();
            if (!string.IsNullOrEmpty(searchValue))
            {
                if (searchBy == "Username")
                {
-                   users = users.Where(x => x.UserName.Contains(searchBy)).ToList();
+                   users = users.Where(x => x.UserName.Contains(searchValue)).ToList();
                }
                else if (searchBy == "Role")
                {
@@ -46,5 +51,25 @@ namespace ShopITCourses.Controllers.Admin
            ViewBag.UserRoles = userRoles;
            return View(users);
        }
+
+        //GET: Users/Details/{id}
+        [HttpGet]
+        public async Task<IActionResult> Details(string id)
+        {
+            if (id == null)
+            {
+                return BadRequest("Не вказано ID користувача");
+            }
+            var user = await _usersManager.FindByIdAsync(id);
+            if (user == null)
+            { 
+                return NotFound("Користувача не знайдено");
+            }
+            var roles = await _usersManager.GetRolesAsync(user);
+            ViewBag.Roles = roles;
+            ShopUser? shopUser = await _db.ShopUsers.FindAsync(user.Id);
+            ViewBag.ShopUser = shopUser;
+            return View(user);
+        }
     }
 }

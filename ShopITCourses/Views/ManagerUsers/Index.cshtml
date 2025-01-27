@@ -1,0 +1,52 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model List<IdentityUser>
+@{
+    ViewData["Title"] = "Панель керування користувачами";
+    var userRoles = ViewBag.UserRoles as Dictionary<string, IList<string>>;
+}
+<h3 class="text-center">Керування користувачами</h3>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <form class="form-control" method="get">
+                <label for="searchBy">Пошук за:</label>
+                <select id="searchBy" name="searchBy">
+                    <option value="Username">Користувач</option>
+                    <option value="Role">Роль користувача</option>
+                </select>
+                <input type="text" name="searchValue" placeholder="Введіть запит" />
+                <button class="btn btn-primary" type="submit">Шукати</button>
+            </form>            
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Користувач</th>
+                        <th>Email</th>
+                        <th>Роль</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@user.UserName</td>
+                            <td>@user.Email</td>
+                            <td>@string.Join(", ", userRoles[user.Id])</td>
+                            <td>
+                                <a class="btn btn-primary" asp-controller="ManagerUsers" asp-action="Edit" asp-route-id="@user.Id"><i class="fas fa-edit"></i></a>
+                                <a class="btn btn-danger" asp-controller="ManagerUsers" asp-action="Delete" asp-route-id="@user.Id"><i class="fa-solid fa-trash"></i></a>
+                                <a class="btn btn-info" asp-controller="ManagerUsers" asp-action="Details" asp-route-id="@user.Id"><i class="fa-solid fa-circle-info"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
