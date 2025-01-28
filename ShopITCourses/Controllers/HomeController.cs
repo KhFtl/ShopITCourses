@@ -1,10 +1,13 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopITCourses.Data;
 using ShopITCourses.Models;
 using ShopITCourses.Models.ViewModel;
+using ShopITCourses.Services;
+using ShopITCourses.Services.IServices;
 using ShopITCourses.Utility;
 
 namespace ShopITCourses.Controllers
@@ -13,15 +16,18 @@ namespace ShopITCourses.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _db;
+        private readonly ICurrentUser _currentUser;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext db)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext db, ICurrentUser currentUser)
         {
             _logger = logger;
             _db = db;
+            _currentUser = currentUser;
         }
 
         public IActionResult Index()
         {
+
             HomeVM homeVM = new HomeVM();
             homeVM.Products = _db.Product;
             homeVM.Categorys = _db.Category;

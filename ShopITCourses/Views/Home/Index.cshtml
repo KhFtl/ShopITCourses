@@ -1,8 +1,22 @@
-﻿@using ShopITCourses.Models.ViewModel
+﻿@using Microsoft.AspNetCore.Identity
+@using ShopITCourses.Models.ViewModel
+@using ShopITCourses.Services.IServices
+@inject ICurrentUser currentUser
 @{
     ViewData["Title"] = "Кращі курси від кращої академії ITStep";
 }
 @model HomeVM
+@{
+    IdentityUser? user = null;
+    if (currentUser.GetCurrentIdentityUserAsync() != null)
+    { 
+        user = currentUser.GetCurrentIdentityUserAsync().Result;
+    }
+}
+@if(user!=null)
+{
+    <h4 class="text-center">Вітаємо: @user.UserName</h4>
+}
 
 <div class="text-center">
     <button class="btn btn-primary filter-button" data-filter="all">Всі курси</button>
