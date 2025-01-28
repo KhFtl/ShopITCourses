@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Панель керування користувачами";
     var userRoles = ViewBag.Roles as IList<string>;
-    var shopUser = ViewBag.ShopUser as ShopUser;
+    var shopUser = ViewBag.ShopUser == null ?  ViewBag.ShopUser as ShopUser: null;
 }
 <h3 class="text-center">Деталі користувача</h3>
 <div class="container">

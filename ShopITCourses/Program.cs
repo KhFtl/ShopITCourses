@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ShopITCourses;
 using ShopITCourses.Data;
-using ShopITCourses.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,6 +63,14 @@ builder.Services.AddAuthorization(options =>
              options.AddPolicy("Admin", policy => policy.RequireRole(WC.AdminRole));
          });
 
+#region Google Authentication
+builder.Services.AddAuthentication().AddGoogle(options =>
+        {
+            options.ClientId = builder.Configuration.GetSection("GoogleKeys:ClientId").Value;
+            options.ClientSecret = builder.Configuration.GetSection("GoogleKeys:ClientSecret").Value;
+        }
+);
+#endregion
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -157,8 +157,10 @@ namespace ShopITCourses.Areas.Identity.Pages.Account
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
                 var result = await _userManager.CreateAsync(user);
+
                 if (result.Succeeded)
                 {
+                    await _userManager.AddToRoleAsync(user, WC.CustomerRole);
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
