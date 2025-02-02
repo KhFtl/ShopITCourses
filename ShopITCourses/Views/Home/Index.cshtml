@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using ShopITCourses.Models.ViewModel
 @using ShopITCourses.Services.IServices
+@using System.Security.Claims
 @inject ICurrentUser currentUser
 @{
     ViewData["Title"] = "Кращі курси від кращої академії ITStep";
@@ -8,9 +9,12 @@
 @model HomeVM
 @{
     IdentityUser? user = null;
-    if (currentUser.GetCurrentIdentityUserAsync() != null)
+    //var authenticationMethod = User.FindFirst(ClaimTypes.AuthenticationMethod)?.Value;
+    var authenticationMethod = currentUser.GetAuthenticationMethod();
+    string? photoUrl = currentUser.GetProfilePictureUrl();
+    if (authenticationMethod != "Google")
     { 
-        user = currentUser.GetCurrentIdentityUserAsync().Result;
+       user = await currentUser.GetCurrentIdentityUserAsync();
     }
 }
 @if(user!=null)

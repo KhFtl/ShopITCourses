@@ -21,28 +21,46 @@ namespace ShopITCourses.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public Task<IdentityUser?> GetCurrentIdentityUserAsync()
+        public async Task<IdentityUser?> GetCurrentIdentityUserAsync()
         {
             var userId = GetUserId();
             if (userId == null)
             {
                 return null;
             }
-            return _userManager.FindByIdAsync(userId);
+            return await _userManager.FindByIdAsync(userId);
         }
 
-        public Task<ShopUser?> GetCurrentShopUserAsync()
+        public async Task<ShopUser?> GetCurrentShopUserAsync()
         {
             var userId = GetUserId();
             if (userId == null)
             {
                 return null;
             }
-            return _db.ShopUsers.FirstOrDefaultAsync(x => x.Id == userId);
+            return await _db.ShopUsers.FirstOrDefaultAsync(x => x.Id == userId);
         }
+
+        public string? GetAuthenticationMethod()
+        {
+            return _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.AuthenticationMethod);
+        }
+
         private string? GetUserId()
         {
             return _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        }
+
+        public string? GetProfilePictureUrl()
+        {
+            var claimsPrincipal = _httpContextAccessor.HttpContext?.User;
+            if (claimsPrincipal == null) return null;
+            var loginProvider = claimsPrincipal.FindFirstValue(ClaimTypes.AuthenticationMethod) ?? claimsPrincipal.FindFirstValue("provider");
+            if ((loginProvider?.Equals("Google", StringComparison.OrdinalIgnoreCase)) == true)
+            {
+                return claimsPrincipal.FindFirstValue("picture");
+            }
+            return null;
         }
     }
 }

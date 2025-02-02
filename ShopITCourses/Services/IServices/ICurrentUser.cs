@@ -7,5 +7,7 @@ namespace ShopITCourses.Services.IServices
     {
         Task<ShopUser?> GetCurrentShopUserAsync();
         Task<IdentityUser?> GetCurrentIdentityUserAsync();
+        string? GetAuthenticationMethod();
+        string? GetProfilePictureUrl();
     }
 }

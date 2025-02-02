@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ShopITCourses;
@@ -68,13 +69,26 @@ builder.Services.AddAuthorization(options =>
          });
 
 #region Google Authentication
-builder.Services.AddAuthentication().AddGoogle(options =>
+var cliendId = builder.Configuration["GoogleKeys:ClientId"];
+var clientSecret = builder.Configuration["GoogleKeys:ClientSecret"];
+if (cliendId != null && clientSecret != null)
+{
+    builder.Services.AddAuthentication().AddGoogle(options =>
         {
-            options.ClientId = builder.Configuration.GetSection("GoogleKeys:ClientId").Value;
-            options.ClientSecret = builder.Configuration.GetSection("GoogleKeys:ClientSecret").Value;
+            //options.ClientId = builder.Configuration.GetSection("GoogleKeys:ClientId").Value;
+            //options.ClientSecret = builder.Configuration.GetSection("GoogleKeys:ClientSecret").Value;
+            options.ClientId = cliendId;
+            options.ClientSecret = clientSecret;
+            options.Scope.Add("profile");
+            options.Scope.Add("email");
+            options.Scope.Add("openid");
+
+            options.ClaimActions.MapJsonKey("picture", "picture");
         }
-);
+        );
+}
 #endregion
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
