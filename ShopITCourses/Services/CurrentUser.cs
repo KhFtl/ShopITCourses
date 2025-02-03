@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ShopITCourses.Data;
 using ShopITCourses.Models;
 using ShopITCourses.Services.IServices;
+using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace ShopITCourses.Services
 {
@@ -58,6 +61,10 @@ namespace ShopITCourses.Services
             var loginProvider = claimsPrincipal.FindFirstValue(ClaimTypes.AuthenticationMethod) ?? claimsPrincipal.FindFirstValue("provider");
             if ((loginProvider?.Equals("Google", StringComparison.OrdinalIgnoreCase)) == true)
             {
+                foreach (var claim in claimsPrincipal.Claims)
+                {
+                    Console.WriteLine($"{claim.Type}: {claim.Value}");
+                }
                 return claimsPrincipal.FindFirstValue("picture");
             }
             return null;

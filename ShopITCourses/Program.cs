@@ -5,6 +5,7 @@ using ShopITCourses;
 using ShopITCourses.Data;
 using ShopITCourses.Services;
 using ShopITCourses.Services.IServices;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,15 +80,23 @@ if (cliendId != null && clientSecret != null)
             //options.ClientSecret = builder.Configuration.GetSection("GoogleKeys:ClientSecret").Value;
             options.ClientId = cliendId;
             options.ClientSecret = clientSecret;
+            options.Scope.Add("openid");
             options.Scope.Add("profile");
             options.Scope.Add("email");
-            options.Scope.Add("openid");
 
-            options.ClaimActions.MapJsonKey("picture", "picture");
+            options.ClaimActions.Clear();
+            options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "sub"); 
+            options.ClaimActions.MapJsonKey(ClaimTypes.Name, "name"); 
+            options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email"); 
+            options.ClaimActions.MapJsonKey("picture", "picture"); 
+            options.SaveTokens = true;
         }
         );
 }
 #endregion
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -97,6 +106,12 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 #region Set Roles in DataBase

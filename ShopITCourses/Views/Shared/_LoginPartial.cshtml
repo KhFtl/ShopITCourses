@@ -4,8 +4,14 @@
 @inject UserManager<IdentityUser> UserManager
 
 <ul class="navbar-nav">
-@if (SignInManager.IsSignedIn(User))
-{
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li>
+            @{
+                string imageUrl = User.FindFirst("picture")?.Value ?? WC.ImageStaticPath + "no-avatar.png";
+            }
+            <img src="@imageUrl" rounded-circle" alt="Profile" referrerpolicy="no-referrer" style="width: 40%;" />
+    </li>
     <li class="nav-item">
         <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Привіт @UserManager.GetUserName(User)!</a>
     </li>

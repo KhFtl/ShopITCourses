@@ -105,6 +105,8 @@ namespace ShopITCourses.Areas.Identity.Pages.Account
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
             var info = await _signInManager.GetExternalLoginInfoAsync();
+            string picture = info.Principal.FindFirstValue("picture");
+
             if (info == null)
             {
                 ErrorMessage = "Error loading external login information.";
@@ -116,6 +118,24 @@ namespace ShopITCourses.Areas.Identity.Pages.Account
             if (result.Succeeded)
             {
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
+
+                #region Add User Claim  
+                if (picture != null)
+                {
+                    var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+                    if (user != null)
+                    {
+                        var claims = await _userManager.GetClaimsAsync(user);
+                        var existingClaim = claims.FirstOrDefault(x => x.Type == "picture");
+                        if (existingClaim != null)
+                        {
+                            await _userManager.RemoveClaimAsync(user, existingClaim);
+                        }
+                        await _userManager.AddClaimAsync(user, new Claim("picture", picture));
+                    }
+                }
+                #endregion
+                
                 return LocalRedirect(returnUrl);
             }
             if (result.IsLockedOut)
@@ -143,6 +163,7 @@ namespace ShopITCourses.Areas.Identity.Pages.Account
             returnUrl = returnUrl ?? Url.Content("~/");
             // Get the information about the user from the external login provider
             var info = await _signInManager.GetExternalLoginInfoAsync();
+
             if (info == null)
             {
                 ErrorMessage = "Error loading external login information during confirmation.";
