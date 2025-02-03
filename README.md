@@ -11,3 +11,6 @@
 та закоментуйте
             options.ClientId = cliendId;
             options.ClientSecret = clientSecret;
+
+Виклик SWAGER для тестування:
+https://localhost:7082/swagger/index.html
