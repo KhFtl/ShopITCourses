@@ -15,9 +15,10 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options=>options.UseSqlServer(connectionString));
 
-//builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ApplicationDbContext>();
-
+#region Register Custom Services
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+builder.Services.AddScoped<IAccessToApi, AccessToApi>();
+#endregion
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
                 options.SignIn.RequireConfirmedAccount = false
