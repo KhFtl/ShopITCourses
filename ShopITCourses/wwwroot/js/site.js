@@ -3,9 +3,21 @@
 
 // Write your JavaScript code.
 
-$(document).ready(function () {
-    $('.preloader').show()
-    $(window).on('load', function () {
-        $('.preloader').hide()
-    });
+//$(document).ready(function () {
+//    $('.preloader').show()
+//    $(window).on('load', function () {
+//        $('.preloader').hide()
+//    });
+//});
+
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("DOMContentLoaded");
+    document.querySelector(".preloader").style.display = "none";
 });
+
+document.onreadystatechange = function () {
+    if (document.readyState === "complete") {
+        console.log("readystate complete");
+        document.querySelector(".preloader").style.display = "none";
+    }
+};
