@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ShopITCourses;
@@ -9,11 +11,16 @@ using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("MSSQLConnection") ?? throw new InvalidOperationException("Not found ConnectionStrings");
+//var connectionString = builder.Configuration.GetConnectionString("MSSQLConnection") ?? throw new InvalidOperationException("Not found ConnectionStrings");
 // Add services to the container.
+
+var connectionString = builder.Configuration.GetConnectionString("MySqlConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContextConnection' not found.");
+
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options=>options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseMySQL(connectionString));
+
+//builder.Services.AddDbContext<ApplicationDbContext>(options=>options.UseSqlServer(connectionString));
 
 #region Register Custom Services
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
@@ -71,15 +78,22 @@ builder.Services.AddAuthorization(options =>
          });
 
 #region Google Authentication
-var cliendId = builder.Configuration["GoogleKeys:ClientId"];
+var clientId = builder.Configuration["GoogleKeys:ClientId"];
 var clientSecret = builder.Configuration["GoogleKeys:ClientSecret"];
-if (cliendId != null && clientSecret != null)
+
+if (clientId == null || clientSecret == null)
+{
+    clientId = builder.Configuration.GetSection("GoogleKeys:ClientId").Value;
+    clientSecret = builder.Configuration.GetSection("GoogleKeys:ClientSecret").Value;
+}
+
+if (clientId != null && clientSecret != null)
 {
     builder.Services.AddAuthentication().AddGoogle(options =>
         {
             //options.ClientId = builder.Configuration.GetSection("GoogleKeys:ClientId").Value;
             //options.ClientSecret = builder.Configuration.GetSection("GoogleKeys:ClientSecret").Value;
-            options.ClientId = cliendId;
+            options.ClientId = clientId;
             options.ClientSecret = clientSecret;
             options.Scope.Add("openid");
             options.Scope.Add("profile");
@@ -91,6 +105,14 @@ if (cliendId != null && clientSecret != null)
             options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email"); 
             options.ClaimActions.MapJsonKey("picture", "picture"); 
             options.SaveTokens = true;
+            options.CallbackPath = "/signin-google";
+
+            options.Events.OnRedirectToAuthorizationEndpoint = context =>
+            {
+                context.RedirectUri = context.RedirectUri.Replace("http://", "https://");
+                context.Response.Redirect(context.RedirectUri);
+                return Task.CompletedTask;
+            };
         }
         );
 }
@@ -98,6 +120,13 @@ if (cliendId != null && clientSecret != null)
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear(); // Дозвіл на всі мережі
+    options.KnownProxies.Clear();  // Дозволяємо всі проксі
+});
 
 var app = builder.Build();
 
@@ -129,6 +158,8 @@ using (var scope = app.Services.CreateScope())
     }
 }
 #endregion
+
+app.UseForwardedHeaders();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

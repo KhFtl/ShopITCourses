@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ShopITCourses.Data;
 using ShopITCourses.Models;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ShopITCourses.Controllers
 {
@@ -70,10 +71,14 @@ namespace ShopITCourses.Controllers
             if (ModelState.IsValid)
             {
                 var files = HttpContext.Request.Form.Files;
-                string upload = _webHostEnvironment.WebRootPath + WC.ImagePath;
-                string fileName = Guid.NewGuid().ToString();
-                string extension = Path.GetExtension(files[0].FileName);
-                using (var fileStream = new FileStream(Path.Combine(upload, fileName + extension), FileMode.Create))
+
+                //var path = _webHostEnvironment.WebRootPath + WC.ImagePath;
+
+                var path = Path.Combine(_webHostEnvironment.WebRootPath,"images","product");
+
+                var fileName = Guid.NewGuid().ToString();
+                var extension = Path.GetExtension(files[0].FileName);
+                using (var fileStream = new FileStream(Path.Combine(path, fileName + extension), FileMode.Create))
                 {
                     await files[0].CopyToAsync(fileStream);
                 }

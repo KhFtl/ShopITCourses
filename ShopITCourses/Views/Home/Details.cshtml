@@ -43,6 +43,11 @@
                             @if (!Model.ExistsInCart)
                             {
                                 <button type="submit" class="btn btn-success form-control btn-lg" style="height:50px;">Придбати</button>
+@*                                 <button type="submit" asp-action="AddToCart" asp-route-id="@Model.Product.Id"
+                                        class="btn btn-success form-control btn-lg" style="height:50px;">
+                                    Придбати
+                                </button> *@
+
                             }
                             else
                             {

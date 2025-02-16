@@ -25,7 +25,7 @@ namespace ShopITCourses.Controllers
             _currentUser = currentUser;
         }
 
-        public async Task<IActionResult> IndexAsync()
+        public IActionResult Index()
         {
             HomeVM homeVM = new HomeVM();
             homeVM.Products = _db.Product;
@@ -34,7 +34,7 @@ namespace ShopITCourses.Controllers
             List<ShopingCart> shopingCartList = ShopingCartSession.GetShopingCartSession(HttpContext);
             List<DetailsVM> detailsVMs = new List<DetailsVM>();
             foreach (var product in homeVM.Products)
-            { 
+            {
                 var exist = shopingCartList.FirstOrDefault(x => x.ProductId == product.Id);
                 if (exist != null)
                 {
@@ -73,7 +73,7 @@ namespace ShopITCourses.Controllers
             List<ShopingCart> shopingCartList = ShopingCartSession.GetShopingCartSession(HttpContext);
             shopingCartList.Add(new ShopingCart { ProductId = id });
             HttpContext.Session.Set(WC.SessionCart, shopingCartList);
-            return RedirectToAction(nameof(IndexAsync));
+            return RedirectToAction(nameof(Index));
         }
         public IActionResult RemoveFromCart(int id)
         { 
@@ -84,7 +84,7 @@ namespace ShopITCourses.Controllers
                 shopingCartList.Remove(itemRemove);
             }
             HttpContext.Session.Set(WC.SessionCart, shopingCartList);
-            return RedirectToAction(nameof(IndexAsync));
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Privacy()
