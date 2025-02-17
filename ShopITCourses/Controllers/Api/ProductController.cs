@@ -35,8 +35,8 @@ namespace ShopITCourses.Controllers.Api
             }
 
             HomeVM homeVM = new HomeVM();
-            homeVM.Products = _db.Product;
-            homeVM.Categorys = _db.Category;
+            homeVM.Products = await _db.Product.AsNoTracking().ToListAsync();
+            homeVM.Categorys = await _db.Category.AsNoTracking().ToListAsync();
 
             string baseUrl = $"{Request.Scheme}://{Request.Host}";
 

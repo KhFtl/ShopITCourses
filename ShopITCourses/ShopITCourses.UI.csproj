@@ -31,4 +31,9 @@
     <Folder Include="wwwroot\files\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ShopITCourses.DAL\ShopITCourses.DAL.csproj" />
+    <ProjectReference Include="..\ShopITCourses.Models\ShopITCourses.Models.csproj" />
+  </ItemGroup>
+
 </Project>

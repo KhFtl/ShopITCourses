@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+
 namespace ShopITCourses.Models
 {
     public class Product
@@ -18,7 +19,7 @@ namespace ShopITCourses.Models
 
         [Required(ErrorMessage ="Вкажіть ціну товару")]
         [Range(1, double.MaxValue)]
-        [DisplayName("Ціна товару "+WC.Currency)]
+        [DisplayName("Ціна товару "/*+WC.Currency*/)]
         public double Price { get; set; }
 
         [DisplayName("Зображення товару")]

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using ShopITCourses.DAL.Repository.IRepository;
 using ShopITCourses.Data;
 using ShopITCourses.Models;
 using static System.Net.Mime.MediaTypeNames;
@@ -17,11 +18,13 @@ namespace ShopITCourses.Controllers
     {
         private readonly ApplicationDbContext _db;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IProductRepository _prodRepo;
 
-        public ProductController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
+        public ProductController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment, IProductRepository prodRepo)
         {
             _db = context;
             _webHostEnvironment = webHostEnvironment;
+            _prodRepo = prodRepo;
         }
 
         // GET: Product
@@ -53,7 +56,8 @@ namespace ShopITCourses.Controllers
         // GET: Product/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_db.Category, "Id", "CategoryName");
+            //ViewData["CategoryId"] = new SelectList(_db.Category, "Id", "CategoryName");
+            //ViewData["CategoryId"] = _prodRepo.GetAllDropDownList("Category");
             return View();
         }
 

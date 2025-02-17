@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ShopITCourses;
+using ShopITCourses.DAL.Repository;
+using ShopITCourses.DAL.Repository.IRepository;
 using ShopITCourses.Data;
 using ShopITCourses.Services;
 using ShopITCourses.Services.IServices;
@@ -33,6 +35,10 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
                  .AddDefaultUI()
                  .AddEntityFrameworkStores<ApplicationDbContext>();
 
+#region Repository
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+#endregion
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddHttpContextAccessor();

@@ -10,10 +10,10 @@ namespace ShopITCourses.Models
     {
         [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Вкажіть ваше ПІБ")]
         [DisplayName("Ваше ПІБ")]
-        public string FullName { get; set; }
+        public string? FullName { get; set; }
 
         [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Вкажіть адресу доставки")]
         [DisplayName("Адреса доставки")]
-        public string AdressDevivery { get; set; }
+        public string? AdressDevivery { get; set; }
     }
 }

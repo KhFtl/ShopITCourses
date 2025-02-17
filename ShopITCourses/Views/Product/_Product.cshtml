@@ -1,4 +1,6 @@
-﻿@model ShopITCourses.Models.Product
+﻿@using ShopITCourses.DAL.Repository.IRepository
+@inject IProductRepository _prodrepo;
+@model ShopITCourses.Models.Product
 
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 <div class="form-group">
@@ -23,7 +25,8 @@
 </div>
 <div class="form-group">
     <label asp-for="CategoryId" class="control-label bold"></label>
-    <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId">
+@*     <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"> *@
+        <select asp-for="CategoryId" class="form-control" asp-items="@_prodrepo.GetAllDropDownList("Category")">
         <option disabled selected>Оберіть категорію</option>
     </select>
     <span asp-validation-for="CategoryId" class="text-danger"></span>
